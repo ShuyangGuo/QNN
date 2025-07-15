@@ -1,0 +1,16 @@
+[project]
+name = "qnn"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy==1.26.4",
+    "seaborn>=0.13.2",
+    "wuyue",
+    "wuyue-machine-learning",
+]
+
+[tool.uv.sources]
+wuyue-machine-learning = { path = "../../../Users/baici/OneDrive/桌面/量子计算编程框架/五岳编程框架/SDK/wuyue_machine_learning-1.0.9-py3-none-any.whl" }
+wuyue = { path = "../../../Users/baici/OneDrive/桌面/量子计算编程框架/五岳编程框架/SDK/wuyue-0.5-py3-none-any.whl" }
