@@ -1,7 +1,2 @@
-import matplotlib as plt
-def main():
-    plt.sca
-
-
-if __name__ == "__main__":
-    main()
+import numpy as np
+print(len(np.array([[1],[2]])))
