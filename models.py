@@ -41,10 +41,10 @@ class MyQNN(QNN):
             index += 1
             circuit.add(RZ, qubit[i], paras=params[index])
             index += 1
-        #Z-Y-Z-CNOT
+        # Z-Y-Z-CNOT
         # for i in range(self.qubits_num-1):
-        #     circuit.add(CNOT, qubit[i+1], qubit[i])
-        # circuit.add(CNOT,qubit[0], qubit[self.qubits_num-1])
+        #     circuit.add(CNOT, qubit[i], qubit[i+1])
+        # circuit.add(CNOT,qubit[self.qubits_num-1], qubit[0])
         # Z-Y-Z-CNOT-Y
         for i in range(self.qubits_num):
             circuit.add(RY,qubit[i],paras=params[index])

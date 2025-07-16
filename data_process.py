@@ -92,7 +92,9 @@ def get_folds():
             columns=data.columns,  # 保留列名
             index=data.index  # 保留索引
         )
+        select_f.append('Time')
         select_f.append('Grid_W')
+
         data=data[select_f]
         # 生成k-fold（k默认5）
         return generate_k_folds(data)
