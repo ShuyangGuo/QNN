@@ -229,6 +229,9 @@ def apply_group_pca(df, feature_groups, n_components=0.95, standardize=True):
             pca = PCA(n_components=n_components)
             principal_components = pca.fit_transform(scaled_data)
 
+            explained_variance_ratio = pca.explained_variance_ratio_
+            print(f"各主成分的解释方差比例：{explained_variance_ratio}")
+
             # 确定实际保留的主成分数量
             n_comp = principal_components.shape[1]
             comp_names = [f"{group_name}_PC{i + 1}" for i in range(1)]

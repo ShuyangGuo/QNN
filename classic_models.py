@@ -12,10 +12,12 @@ from torch.utils.data import DataLoader, TensorDataset
 # 从给定的表格数据创建DataFrame
 
 df = pd.read_csv('row_data.csv')
-
+# df = pd.read_excel('o.xlsx')
 # 提取特征和目标
 X = df[['Windspeed', 'Winddir', 'Grid_V']].values
 y = df['Grid_W'].values.reshape(-1, 1)
+# X = df[['Group_1_PC1', 'Group_2_PC1', 'Group_3_PC1']].values
+# y = df['label'].values.reshape(-1, 1)
 
 # 数据标准化
 scaler_X = StandardScaler()
@@ -144,7 +146,8 @@ true_values = np.vstack(true_values)
 # 反标准化
 predictions_orig = scaler_y.inverse_transform(predictions)
 true_values_orig = scaler_y.inverse_transform(true_values)
-
+# predictions_orig=predictions
+# true_values_orig=true_values
 # 计算评估指标
 from sklearn.metrics import mean_absolute_error, r2_score
 
