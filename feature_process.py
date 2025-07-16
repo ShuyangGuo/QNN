@@ -33,11 +33,11 @@ def select_high_correlation_features(df, target_col, method='pearson', top_k=Non
         corr_df = pd.Series(mi, index=X.columns).sort_values(ascending=False)
 
     # 可视化相关性
-    # plt.figure(figsize=(12, 6))
-    # corr_df.head(20).plot(kind='bar')
-    # plt.title(f'Top Features Correlation with {target_col} ({method})')
-    # plt.ylabel('Correlation Score')
-    # plt.show()
+    plt.figure(figsize=(12, 6))
+    corr_df.head(20).plot(kind='bar')
+    plt.title(f'Top Features Correlation with {target_col} ({method})')
+    plt.ylabel('Correlation Score')
+    plt.show()
 
     # 选择特征
     if top_k:

@@ -6,6 +6,33 @@ import feature_process
 from data_analysis import analyze_data_anomalies
 from cross_val import generate_k_folds
 import openpyxl
+import numpy as np
+
+def TimeToCycle(time_df):
+    df = pd.DataFrame()
+
+    df["time"] = pd.to_datetime(time_df, format="%Y/%m/%d %H:%M")
+    # 小时（0-23，周期24）
+    df["hour"] = df["time"].dt.hour
+
+    # 星期几（0=周一，6=周日，周期7）
+    df["dayofweek"] = df["time"].dt.dayofweek
+
+    # 月份（1-12，周期12）
+    df["month"] = df["time"].dt.month
+    # 小时的周期特征（24小时）
+    df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
+    df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
+
+    # 星期的周期特征（7天）
+    df["dayofweek_sin"] = np.sin(2 * np.pi * df["dayofweek"] / 7)
+    df["dayofweek_cos"] = np.cos(2 * np.pi * df["dayofweek"] / 7)
+
+    # 月份的周期特征（12个月）
+    df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
+    df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
+    return df[["hour_sin","hour_cos","dayofweek_sin","dayofweek_cos","month_sin","month_cos"]]
+
 
 def TimeToStamp(time_str):
     # 解析时间格式（%Y：年，%m：月，%d：日，%H：时，%M：分）
@@ -79,14 +106,17 @@ def get_folds():
         print(f"数据成功导入，共{len(data)}行，{len(data.columns)}列")
         # print("数据前几行信息：")
         # print(data.head().to_string())
-        data['Time']=data['Time'].map(TimeToStamp)
+        # data['Time']=data['Time'].map(TimeToStamp)
+        df=TimeToCycle(data['Time'])
+        data=pd.concat([df,data],axis=1)
+        data=data.drop(['Time'],axis=1)
         #特征筛选与分类
         select_f = feature_process.select_high_correlation_features(data,'Grid_W',threshold=0.4)
         f_cluster=feature_process.cluster_correlated_features(data,select_f)
+        print(select_f)
         #计算主成分
         # data_pca, pca_info=feature_process.apply_group_pca(data,f_cluster)
         # data_pca['label'] = data.iloc[:, 2]
-
         data = pd.DataFrame(
             min_max(data),
             columns=data.columns,  # 保留列名
@@ -96,8 +126,6 @@ def get_folds():
         data=data[select_f]
         # 生成k-fold（k默认5）
         return generate_k_folds(data)
-
-
     except FileNotFoundError:
         print("错误：文件未找到，请检查文件路径是否正确")
     except Exception as e:

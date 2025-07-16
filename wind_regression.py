@@ -4,6 +4,7 @@ from cross_val import cross_val
 from models import MyQNN
 from wuyue_machine_learning.optimizer import Adam
 from wuyue_machine_learning.utils import numpy as np
+import numpy as np
 import openpyxl
 
 def visualization(true_values,predictions):
@@ -21,15 +22,16 @@ def visualization(true_values,predictions):
     plt.savefig('true_vs_predicted.png')
     plt.show()
 
-def train(train_x, test_x, train_y, test_y,epochs=2,batch_size = 1000):
+def train(train_x, test_x, train_y, test_y,epochs=25,batch_size = 1000):
     train_x,test_x, train_y, test_y=list(map(lambda df: df.to_numpy(), [train_x,test_x, train_y, test_y]))
     # 初始化参数
-    params = np.random.rand(qubits_num * 4 + 1)
+    # params = np.random.rand(qubits_num * 4 + 1)
+    params=np.zeros(qubits_num * 4 + 1)
     params[-1] = 0.0
     train_num = train_x.shape[0]
 
     # 初始化优化器
-    adam = Adam(params, 0.01)
+    adam = Adam(params, 0.05)
     train_losses = []
     test_losses = []
     for epochs in range(epochs):
@@ -60,6 +62,7 @@ def train(train_x, test_x, train_y, test_y,epochs=2,batch_size = 1000):
 # train_x.to_excel('o.xlsx')
 # train_x,test_x, train_y, test_y=list(map(lambda df: df.to_numpy(), [train_x,test_x, train_y, test_y]))
 folds=get_folds()
+print(folds[0][0])
 # 参数设置
 qubits_num = folds[0][0].shape[1]-1  # 量子比特数量
 # 实例化量子神经网络
