@@ -7,6 +7,8 @@ from data_analysis import analyze_data_anomalies
 from cross_val import generate_k_folds
 import openpyxl
 
+def TimeToCircle(time_str):
+
 def TimeToStamp(time_str):
     # 解析时间格式（%Y：年，%m：月，%d：日，%H：时，%M：分）
     dt = datetime.strptime(time_str, "%Y/%m/%d %H:%M")
@@ -95,7 +97,7 @@ def get_folds():
         select_f.append('Grid_W')
         data=data[select_f]
         # 生成k-fold（k默认5）
-        return generate_k_folds(data)
+        return generate_k_folds(data,2)
 
 
     except FileNotFoundError:

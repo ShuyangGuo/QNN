@@ -21,7 +21,7 @@ def visualization(true_values,predictions):
     plt.savefig('true_vs_predicted.png')
     plt.show()
 
-def train(train_x, test_x, train_y, test_y,epochs=2,batch_size = 1000):
+def train(train_x, test_x, train_y, test_y,epochs=100,batch_size = 1000):
     train_x,test_x, train_y, test_y=list(map(lambda df: df.to_numpy(), [train_x,test_x, train_y, test_y]))
     # 初始化参数
     params = np.random.rand(qubits_num * 4 + 1)
