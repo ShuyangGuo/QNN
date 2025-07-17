@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-
+import numpy as np
 from wuyue.register.quantumregister import QuantumRegister
 from wuyue.register.classicalregister import ClassicalRegister
 from wuyue.circuit.circuit import QuantumCircuit
@@ -21,16 +21,16 @@ class MyQNN(QNN):
         circuit = QuantumCircuit(qubit, cbit)
 
         # 角度编码
-        for i in range(self.qubits_num):
-            # for value in self.f_cluster.values():
-            #     for feature in value:
-            #         temp=x[feature].to_numpy()
-            #         circuit.add(RY, qubit[i], paras=temp * np.pi)
-            # temp = x.to_numpy()
-            # print(x)
-            circuit.add(RY, qubit[i], paras=x[:, i] * np.pi)
+        # for i in range(self.qubits_num):
+        #     circuit.add(RY, qubit[i], paras=x[:, i] * np.pi)
             # circuit.add(RY, qubit[i], paras=np.arcsin(x[:,i])).add(RZ, qubit[i],paras=np.arccos(x[:,i] ** 2))
-
+        # for i in range(self.qubits_num - 6,self.qubits_num):
+        #     circuit.add(RY, qubit[self.qubits_num - 6], paras=np.arcsin(x[:, i]) * np.pi)
+        circuit.add(RY, qubit[0], paras=x[:, 0] * np.pi)
+        circuit.add(RY, qubit[1], paras=x[:, 1] * np.pi)
+        circuit.add(RY, qubit[2], paras=2 * np.arctan2(x[:,2],x[:,3]))
+        circuit.add(RY, qubit[3], paras=2 * np.arctan2(x[:,4],x[:,5]))
+        circuit.add(RY, qubit[4], paras=2 * np.arctan2(x[:, 6], x[:, 7]))
         # 参数化量子线路
         index=0
         #Z-Y-Z
@@ -41,7 +41,14 @@ class MyQNN(QNN):
             index += 1
             circuit.add(RZ, qubit[i], paras=params[index])
             index += 1
-        #Z-Y-Z-CNOT
+
+        # #Z-Y-Z-CNOT
+        # circuit.add(CNOT, qubit[0], qubit[1])
+        # circuit.add(CNOT, qubit[1], qubit[2])
+        # circuit.add(CNOT, qubit[2], qubit[3])
+        # circuit.add(CNOT, qubit[3], qubit[4])
+        # circuit.add(CNOT, qubit[4], qubit[0])
+
         # for i in range(self.qubits_num-1):
         #     circuit.add(CNOT, qubit[i+1], qubit[i])
         # circuit.add(CNOT,qubit[0], qubit[self.qubits_num-1])
@@ -50,33 +57,6 @@ class MyQNN(QNN):
             circuit.add(RY,qubit[i],paras=params[index])
             index += 1
         return self.backend.expectation(circuit, PauliZ(0))
-
-        # 结构化参数化量子线路（多层）
-        # param_idx = 0
-        # for layer in range(3):
-        #     # 参数化旋转层
-        #     for i in range(self.qubits_num):
-        #         circuit.add(RZ, qubit[i], paras=params[param_idx])
-        #         param_idx += 1
-        #         circuit.add(RY, qubit[i], paras=params[param_idx])
-        #         param_idx += 1
-        #         circuit.add(RZ, qubit[i], paras=params[param_idx])
-        #         param_idx += 1
-        #
-        #     # 改进的纠缠层（全连接模式）
-        #     for i in range(self.qubits_num):
-        #         for j in range(i + 1, self.qubits_num):
-        #             circuit.add(CNOT, qubit[j], qubit[i])
-        #
-        # # 输出层（每个qubit增加一个旋转门）
-        # for i in range(self.qubits_num):
-        #     circuit.add(RY, qubit[i], paras=params[param_idx])
-        #     param_idx += 1
-        #
-        # # 使用所有qubit的测量结果（而非仅PauliZ(0)）
-        # observables = [PauliZ(i) for i in range(self.qubits_num)]
-        # return self.backend.expectation(circuit, observables)
-
     # 预测
     def predict(self, params, x):
         y_preds = self.forward(params, x)/ 2 + 0.5 + params[-1]

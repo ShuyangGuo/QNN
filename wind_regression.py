@@ -22,7 +22,7 @@ def visualization(true_values,predictions):
     plt.savefig('true_vs_predicted.png')
     plt.show()
 
-def train(train_x, test_x, train_y, test_y,epochs=25,batch_size = 1000):
+def train(train_x, test_x, train_y, test_y,epochs=100,batch_size = 1000):
     train_x,test_x, train_y, test_y=list(map(lambda df: df.to_numpy(), [train_x,test_x, train_y, test_y]))
     # 初始化参数
     # params = np.random.rand(qubits_num * 4 + 1)
@@ -31,7 +31,7 @@ def train(train_x, test_x, train_y, test_y,epochs=25,batch_size = 1000):
     train_num = train_x.shape[0]
 
     # 初始化优化器
-    adam = Adam(params, 0.05)
+    adam = Adam(params, 0.01)
     train_losses = []
     test_losses = []
     for epochs in range(epochs):
@@ -62,9 +62,11 @@ def train(train_x, test_x, train_y, test_y,epochs=25,batch_size = 1000):
 # train_x.to_excel('o.xlsx')
 # train_x,test_x, train_y, test_y=list(map(lambda df: df.to_numpy(), [train_x,test_x, train_y, test_y]))
 folds=get_folds()
-print(folds[0][0])
+print(folds[0][0].columns)
 # 参数设置
-qubits_num = folds[0][0].shape[1]-1  # 量子比特数量
+# qubits_num = folds[0][0].shape[1]-1  # 量子比特数量
+qubits_num=5
+print(qubits_num)
 # 实例化量子神经网络
 myqnn = MyQNN(qubits_num)
 # 训练(cross validation)

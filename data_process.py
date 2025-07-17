@@ -31,7 +31,7 @@ def TimeToCycle(time_df):
     # 月份的周期特征（12个月）
     df["month_sin"] = np.sin(2 * np.pi * df["month"] / 12)
     df["month_cos"] = np.cos(2 * np.pi * df["month"] / 12)
-    return df[["hour_sin","hour_cos","dayofweek_sin","dayofweek_cos","month_sin","month_cos"]]
+    return df[["hour_sin","hour_cos","dayofweek_sin","dayofweek_cos","month_sin","month_cos"]],["hour_sin","hour_cos","dayofweek_sin","dayofweek_cos","month_sin","month_cos"]
 
 
 def TimeToStamp(time_str):
@@ -69,7 +69,6 @@ def get_data():
         )
         # data_pca.to_excel('o.xlsx')
         # 提取特征列和目标列（需根据实际数据调整）
-        # 假设最后一列是目标变量，其余为特征
         X = data[select_f]
         y = data['Grid_W']
         return X,y
@@ -107,9 +106,16 @@ def get_folds():
         # print("数据前几行信息：")
         # print(data.head().to_string())
         # data['Time']=data['Time'].map(TimeToStamp)
-        df=TimeToCycle(data['Time'])
+        df,time_columns=TimeToCycle(data['Time'])
         data=pd.concat([df,data],axis=1)
         data=data.drop(['Time'],axis=1)
+        data.to_csv('TimeEmbedding.csv')
+        data = pd.read_csv('TimeEmbedding.csv')
+        data = pd.DataFrame(
+            min_max(data),
+            columns=data.columns,  # 保留列名
+            index=data.index  # 保留索引
+        )
         #特征筛选与分类
         select_f = feature_process.select_high_correlation_features(data,'Grid_W',threshold=0.4)
         f_cluster=feature_process.cluster_correlated_features(data,select_f)
@@ -117,12 +123,12 @@ def get_folds():
         #计算主成分
         # data_pca, pca_info=feature_process.apply_group_pca(data,f_cluster)
         # data_pca['label'] = data.iloc[:, 2]
-        data = pd.DataFrame(
-            min_max(data),
-            columns=data.columns,  # 保留列名
-            index=data.index  # 保留索引
-        )
+        select_f+=time_columns
+        for i in ['T.6(217)', 'T.1(202)', 'T.5(214)', 'T.2(205)']:
+            select_f.remove(i)
+
         select_f.append('Grid_W')
+
         data=data[select_f]
         # 生成k-fold（k默认5）
         return generate_k_folds(data)
